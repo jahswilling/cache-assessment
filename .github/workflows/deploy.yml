@@ -39,8 +39,8 @@ jobs:
     - name: Build and Push Docker image
       run: |
         cd cache_app_demo
-        docker build -t ${{ env.ARTIFACT_REGISTRY }}:${{ github.sha }} .
-        docker push ${{ env.ARTIFACT_REGISTRY }}:${{ github.sha }}
+        docker build -t ${{ env.ARTIFACT_REGISTRY }}/cache-app-dev:${{ github.sha }} .
+        docker push ${{ env.ARTIFACT_REGISTRY }}/cache-app-dev:${{ github.sha }}
 
     # - name: Get GKE credentials
     #   run: |
@@ -52,7 +52,7 @@ jobs:
     #   run: |
     #     cd cache_app_demo
     #     # Update the image in the deployment manifest
-    #     sed -i "s|image:.*|image: ${{ env.ARTIFACT_REGISTRY }}:${{ github.sha }}|" k8s/deployment.yaml
+    #     sed -i "s|image:.*|image: ${{ env.ARTIFACT_REGISTRY }}/cache-app-dev:${{ github.sha }}|" k8s/deployment.yaml
         
     #     # Apply the Kubernetes manifests
     #     kubectl apply -f k8s/namespace.yaml
