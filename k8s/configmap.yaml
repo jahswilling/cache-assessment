@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cache-app-config
+  namespace: development
+data:
+  DEBUG: "False"
+  PUBSUB_PROJECT_ID: "cache-dev-infra"
+  PUBSUB_TOPIC_ID: "development-cache-topic"
+  PUBSUB_SUBSCRIPTION_ID: "development-cache-subscription" 

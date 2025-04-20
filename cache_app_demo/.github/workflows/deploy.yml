@@ -1,0 +1,66 @@
+name: Deploy to Google Cloud
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  ARTIFACT_REGISTRY: us-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/cache-app
+  K8S_NAMESPACE: development
+  K8S_CLUSTER: cache-dev-cluster
+  K8S_REGION: us-west1
+
+jobs:
+  setup-build-publish-deploy:
+    name: Setup, Build, Publish, and Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v1
+      with:
+        project_id: ${{ secrets.GCP_PROJECT_ID }}
+
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v1
+      with:
+        credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+    - name: Configure Docker for Artifact Registry
+      run: |
+        gcloud auth configure-docker us-west1-docker.pkg.dev
+
+    - name: Build and Push Docker image
+      run: |
+        cd cache_app_demo
+        docker build -t ${{ env.ARTIFACT_REGISTRY }}:${{ github.sha }} .
+        docker push ${{ env.ARTIFACT_REGISTRY }}:${{ github.sha }}
+
+    # - name: Get GKE credentials
+    #   run: |
+    #     gcloud container clusters get-credentials ${{ env.K8S_CLUSTER }} \
+    #       --region ${{ env.K8S_REGION }} \
+    #       --project ${{ secrets.GCP_PROJECT_ID }}
+
+    # - name: Deploy to Kubernetes
+    #   run: |
+    #     cd cache_app_demo
+    #     # Update the image in the deployment manifest
+    #     sed -i "s|image:.*|image: ${{ env.ARTIFACT_REGISTRY }}:${{ github.sha }}|" k8s/deployment.yaml
+        
+    #     # Apply the Kubernetes manifests
+    #     kubectl apply -f k8s/namespace.yaml
+    #     kubectl apply -f k8s/configmap.yaml
+    #     kubectl apply -f k8s/deployment.yaml
+    #     kubectl apply -f k8s/service.yaml
+
+    # - name: Verify Deployment
+    #   run: |
+    #     kubectl rollout status deployment/cache-app-demo -n ${{ env.K8S_NAMESPACE }}
+    #     kubectl get pods -n ${{ env.K8S_NAMESPACE }}
