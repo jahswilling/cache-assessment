@@ -1,0 +1,6 @@
+Django==4.2.18
+djangorestframework==3.14.0
+python-dotenv==1.0.0
+google-cloud-pubsub==2.18.4
+psycopg2-binary==2.9.9
+python-json-logger==2.0.7 

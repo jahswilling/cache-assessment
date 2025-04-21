@@ -132,3 +132,12 @@ module "github_actions_iam" {
   artifact_registry_name = var.repository_id
 }
 
+module "external_secrets" {
+  source = "../../modules/external-secrets"
+
+  project_id        = var.project
+  cluster_name      = module.gke.cluster_name
+  cluster_location  = var.region
+  cluster_dependency = data.google_container_cluster.primary
+}
+

@@ -2,11 +2,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: cache-app-demo
-  namespace: development
+  namespace: dev
   labels:
     app: cache-app-demo
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: cache-app-demo
@@ -17,10 +17,12 @@ spec:
     spec:
       containers:
       - name: cache-app-demo
-        image: us-west1-docker.pkg.dev/cache-dev-infra/cache-app:latest
+        image: us-west1-docker.pkg.dev/cache-dev-infra/cache-app/cache-app-dev:a7571aef42e63d7820e4c0b9fc0451feb3723b69
         ports:
         - containerPort: 8000
         envFrom:
+        - secretRef:
+            name: cache-app-secrets
         - configMapRef:
             name: cache-app-config
         resources:

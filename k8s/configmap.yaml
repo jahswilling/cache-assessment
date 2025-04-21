@@ -2,9 +2,11 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: cache-app-config
-  namespace: development
+  namespace: dev
 data:
   DEBUG: "False"
+  DATABASE_ENGINE: "django.db.backends.postgresql"
+  DATABASE_PORT: "5432"
   PUBSUB_PROJECT_ID: "cache-dev-infra"
-  PUBSUB_TOPIC_ID: "development-cache-topic"
-  PUBSUB_SUBSCRIPTION_ID: "development-cache-subscription" 
+  PUBSUB_TOPIC_ID: "dev-cache-topic"
+  PUBSUB_SUBSCRIPTION_ID: "dev-cache-subscription" 
