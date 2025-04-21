@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: cache-app-demo
-        image: us-west1-docker.pkg.dev/cache-dev-infra/cache-app/cache-app-dev:a7571aef42e63d7820e4c0b9fc0451feb3723b69
+        image: us-west1-docker.pkg.dev/cache-dev-infra/cache-app/cache-app-dev:fb5dae954be69bc7506734fb8cd7913cbcc8e6e0
         ports:
         - containerPort: 8000
         envFrom:

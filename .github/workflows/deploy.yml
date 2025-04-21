@@ -12,7 +12,7 @@ env:
   K8S_NAMESPACE: dev
   K8S_CLUSTER: development-cluster
   K8S_REGION: us-west1
-  BASTION_HOST: 34.127.93.169
+  BASTION_HOST: 35.185.192.225
 
 jobs:
   setup-build-publish-deploy:
