@@ -43,30 +43,45 @@ jobs:
         docker build -t ${{ env.ARTIFACT_REGISTRY }}/cache-app-dev:${{ github.sha }} .
         docker push ${{ env.ARTIFACT_REGISTRY }}/cache-app-dev:${{ github.sha }}
 
-    - name: Setup SSH Key
-      run: |
-        mkdir -p ~/.ssh
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        ssh-keyscan -H ${{ env.BASTION_HOST }} >> ~/.ssh/known_hosts
+    # - name: Setup SSH Key
+    #   run: |
+    #     mkdir -p ~/.ssh
+    #     echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+    #     chmod 600 ~/.ssh/id_rsa
+    #     ssh-keyscan -H ${{ env.BASTION_HOST }} >> ~/.ssh/known_hosts
 
-    - name: Get GKE credentials through bastion
-      run: |
-        ssh -f -N -L 6443:$(gcloud container clusters describe ${{ env.K8S_CLUSTER }} --region ${{ env.K8S_REGION }} --project ${{ secrets.GCP_PROJECT_ID }} --format="value(endpoint)"):443 bastion@${{ env.BASTION_HOST }}
-        gcloud container clusters get-credentials ${{ env.K8S_CLUSTER }} \
-          --region ${{ env.K8S_REGION }} \
-          --project ${{ secrets.GCP_PROJECT_ID }} \
-          --internal-ip
-
-    - name: Deploy to Kubernetes
-      run: |
-        # Update the image in the deployment manifest
-        sed -i "s|image:.*|image: ${{ env.ARTIFACT_REGISTRY }}/cache-app-dev:${{ github.sha }}|" k8s/deployment.yaml
+    # - name: Get GKE credentials through bastion
+    #   run: |
+    #     # Copy the service account key to bastion
+    #     scp $GOOGLE_APPLICATION_CREDENTIALS bastion@${{ env.BASTION_HOST }}:/tmp/gcp-creds.json
         
-        # Apply the Kubernetes manifests
-        kubectl apply -f k8s/deployment.yaml
+    #     # Run GKE commands on bastion
+    #     ssh bastion@${{ env.BASTION_HOST }} << 'EOF'
+    #     export GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcp-creds.json
+    #     gcloud auth activate-service-account --key-file=/tmp/gcp-creds.json
+    #     gcloud container clusters get-credentials ${{ env.K8S_CLUSTER }} \
+    #       --region ${{ env.K8S_REGION }} \
+    #       --project ${{ secrets.GCP_PROJECT_ID }} \
+    #       --internal-ip
+    #     EOF
 
-    - name: Verify Deployment
-      run: |
-        kubectl rollout status deployment/cache-app-demo -n ${{ env.K8S_NAMESPACE }}
-        kubectl get pods -n ${{ env.K8S_NAMESPACE }}
+    # - name: Deploy to Kubernetes
+    #   run: |
+    #     # Copy deployment files to bastion
+    #     scp -r k8s bastion@${{ env.BASTION_HOST }}:/tmp/
+        
+    #     # Run kubectl commands on bastion
+    #     ssh bastion@${{ env.BASTION_HOST }} << 'EOF'
+    #     export GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcp-creds.json
+    #     cd /tmp/k8s
+    #     sed -i "s|image:.*|image: ${{ env.ARTIFACT_REGISTRY }}/cache-app-dev:${{ github.sha }}|" deployment.yaml
+    #     kubectl apply -f deployment.yaml
+    #     EOF
+
+    # - name: Verify Deployment
+    #   run: |
+    #     ssh bastion@${{ env.BASTION_HOST }} << 'EOF'
+    #     export GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcp-creds.json
+    #     kubectl rollout status deployment/cache-app-demo -n ${{ env.K8S_NAMESPACE }}
+    #     kubectl get pods -n ${{ env.K8S_NAMESPACE }}
+    #     EOF

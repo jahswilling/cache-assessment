@@ -12,6 +12,83 @@ The infrastructure consists of several key components:
 - **PubSub**: Message queue and event streaming
 - **Bastion**: Secure access management
 - **Artifact Registry**: Container image storage
+- **External Secrets**: Secure secret management
+- **IAM**: Identity and access management
+
+## Network Architecture
+
+The network infrastructure is designed with security and scalability in mind:
+
+- **VPC Structure**
+  - Private subnets for workloads
+  - Public subnets for bastion and load balancers
+  - Regional subnets for high availability
+  - Network peering for cross-project communication
+
+- **Security**
+  - Firewall rules with least privilege access
+  - Private GKE cluster with authorized networks
+  - Cloud NAT for outbound internet access
+  - VPC Service Controls for additional security
+
+## Module Details
+
+### Core Modules
+
+1. **Network Module**
+   - VPC creation and configuration
+   - Subnet creation with secondary IP ranges
+   - Cloud NAT setup
+   - Firewall rules management
+   - VPC peering configuration
+
+2. **GKE Module**
+   - Private cluster setup
+   - Node pool configuration
+   - Network policy enforcement
+   - Workload identity setup
+   - Cluster autoscaling
+
+3. **Database Module**
+   - Cloud SQL instance creation
+   - Database configuration
+   - Backup and maintenance setup
+   - Private IP configuration
+   - Read replicas (optional)
+
+4. **PubSub Module**
+   - Topic creation
+   - Subscription setup
+   - IAM permissions
+   - Dead letter topics
+   - Message retention policies
+
+5. **Bastion Module**
+   - Compute instance creation
+   - IAP tunnel configuration
+   - OS login integration
+   - SSH key management
+   - Access logging
+
+6. **Artifact Registry Module**
+   - Repository creation
+   - IAM permissions
+   - Cleanup policies
+   - Cross-project access
+
+7. **External Secrets Module**
+   - Secret Manager integration
+   - Kubernetes secret store setup
+   - IAM bindings for secret access
+   - Secret rotation configuration
+   - Access logging and monitoring
+
+8. **IAM Module**
+   - Service account creation
+   - Custom role definitions
+   - IAM bindings and policies
+   - Workload identity federation
+   - Permission management
 
 ## Directory Structure
 
@@ -23,11 +100,16 @@ The infrastructure consists of several key components:
 │   └── prod/            # Production environment
 └── modules/             # Reusable infrastructure modules
     ├── network/         # Networking components
+    │   ├── main.tf     # Main networking resources
+    │   ├── variables.tf # Network variables
+    │   └── outputs.tf  # Network outputs
     ├── gke/            # Kubernetes cluster
     ├── database/       # Database resources
     ├── pubsub/         # PubSub configuration
     ├── bastion/        # Bastion host setup
-    └── artifact-registry/  # Container registry
+    ├── artifact-registry/  # Container registry
+    ├── external-secrets/   # Secret management
+    └── iam/            # Identity and access management
 ```
 
 ## Prerequisites
@@ -68,6 +150,10 @@ Each environment (dev, staging, prod) has its own configuration and state. This 
 - Bastion host provides controlled access to resources
 - IAM roles follow the principle of least privilege
 - Sensitive data is managed through secure methods
+- Network policies enforce pod-to-pod communication rules
+- Private cluster configuration with authorized networks
+- External secrets for secure credential management
+- Regular IAM permission audits
 
 ## Contributing
 
@@ -76,14 +162,4 @@ Each environment (dev, staging, prod) has its own configuration and state. This 
 3. Test the changes in a development environment
 4. Submit a pull request with a clear description of changes
 
-## Maintenance
 
-Regular maintenance tasks include:
-- Updating module versions
-- Reviewing and updating security configurations
-- Monitoring resource usage
-- Applying security patches
-
-## Support
-
-For infrastructure-related issues or questions, please contact the infrastructure team.
