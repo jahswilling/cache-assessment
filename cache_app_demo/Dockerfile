@@ -24,5 +24,7 @@ COPY . .
 # Collect static files
 RUN python manage.py collectstatic --noinput
 
+RUN python manage.py migrate --noinput
+
 # Run the application
 CMD ["gunicorn", "cache_app_demo.wsgi:application", "--bind", "0.0.0.0:8000"] 
