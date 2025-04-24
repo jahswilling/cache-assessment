@@ -71,4 +71,19 @@ output "bastion_ssh_command" {
 # Output the service account email for reference
 output "github_actions_service_account" {
   value = module.github_actions_iam.service_account_email
+}
+
+output "elk_vm_ip" {
+  value       = module.elk_stack.vm_ip
+  description = "Public IP address of the ELK stack VM"
+}
+
+output "kibana_url" {
+  value       = module.elk_stack.kibana_url
+  description = "URL to access Kibana"
+}
+
+output "elasticsearch_url" {
+  value       = module.elk_stack.elasticsearch_url
+  description = "URL to access Elasticsearch"
 } 

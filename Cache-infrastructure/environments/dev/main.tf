@@ -141,3 +141,44 @@ module "external_secrets" {
   cluster_dependency = data.google_container_cluster.primary
 }
 
+# module "eck" {
+#   source = "../../modules/eck"
+
+#   elasticsearch_cluster_name = "cache-elasticsearch"
+#   namespace                 = "elasticsearch"
+#   elasticsearch_version     = "8.11.0"
+#   node_count               = 3
+#   memory_request           = "4Gi"
+#   cpu_request             = "2"
+#   memory_limit            = "8Gi"
+#   cpu_limit               = "4"
+
+#   depends_on = [
+#     module.gke
+#   ]
+# }
+
+module "elk_stack" {
+  source = "../../modules/elk-stack"
+
+  # VM Configuration
+  vm_name         = "dev-elk-stack"
+  zone            = "${var.region}-a"
+  network         = module.network.network_name
+  subnetwork      = module.network.subnet_name
+  ssh_user        = "ubuntu"
+  ssh_pub_key_path = "~/.ssh/cache-ssh-key.pub"  # Using the same SSH key as bastion
+
+  # ELK Configuration
+  elasticsearch_username = "elastic"
+  elasticsearch_password = var.elasticsearch_password
+
+  # GKE Cluster Configuration
+  gke_cluster_node_ip_range = module.gke.cluster_node_ip_range
+
+  depends_on = [
+    module.network,
+    google_project_service.gcp_services
+  ]
+}
+

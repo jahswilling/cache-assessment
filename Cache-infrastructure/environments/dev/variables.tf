@@ -157,3 +157,10 @@ variable "repository_format" {
   description = "The format of the repository (e.g., DOCKER)"
   type        = string
 }
+
+variable "elasticsearch_password" {
+  type        = string
+  description = "Password for Elasticsearch"
+  sensitive   = true
+}
+
