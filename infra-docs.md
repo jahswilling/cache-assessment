@@ -160,6 +160,17 @@ This document outlines the implemented infrastructure components for the Cache a
 
 ## Monitoring & Alerting
 
+### ELK Stack Monitoring
+- **Kibana Dashboard**: http://35.230.70.233:5601/app/discover
+  - Username: elastic
+  - Password: elastic1234
+- **Log Collection**:
+  - Filebeat deployed in GKE cluster
+  - Logs forwarded to Elasticsearch VM
+    - External IP: 35.230.70.233
+    - Internal IP: 10.0.0.15
+  - HTTPS secured communication
+
 ### Infrastructure Monitoring
 - Resource utilization
 - Network traffic

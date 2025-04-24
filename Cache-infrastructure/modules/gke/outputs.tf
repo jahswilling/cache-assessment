@@ -41,4 +41,9 @@ output "cluster_region" {
 output "cluster_zones" {
   description = "The zones of the GKE cluster"
   value       = var.gke_node_zones
+}
+
+output "cluster_node_ip_range" {
+  description = "The IP range of the GKE cluster nodes"
+  value       = var.pods_cidr
 } 
